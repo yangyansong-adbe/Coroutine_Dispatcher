@@ -66,8 +66,11 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 //                }
                 if(counter.incrementAndGet() == requestNumber) {
                     val endTime = System.currentTimeMillis()
-                    Thread.getAllStackTraces().keys.sortedBy { Log.e("--------------------", "thread: ${it.name}") }
-                    Log.e("Edge", "total time: ${endTime - startTime}")
+                    Thread.getAllStackTraces().keys.size.let {
+                        Log.e("--------------------", "thread number: $it")
+                    }
+                    Thread.getAllStackTraces().keys.forEach { Log.e("--------------------", "thread: ${it.name}") }
+                    Log.e("--------------------", "total time: ${endTime - startTime}")
                 }
             }
         }
