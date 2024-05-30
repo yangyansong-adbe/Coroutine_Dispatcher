@@ -65,6 +65,14 @@ dependencies {
     }
     implementation("com.google.guava:guava:33.2.0-jre")
 
+    implementation("io.ktor:ktor-client-android:1.5.0")
+    implementation("io.ktor:ktor-client-serialization:1.5.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.0.1")
+    implementation("io.ktor:ktor-client-logging-jvm:1.5.0")
+
+    implementation("com.braze:android-sdk-base:31.1.0")
+
+
     implementation("androidx.core:core-ktx:1.13.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
