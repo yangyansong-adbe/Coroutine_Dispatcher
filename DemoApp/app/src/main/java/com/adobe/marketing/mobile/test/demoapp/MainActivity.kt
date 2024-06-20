@@ -29,6 +29,13 @@ import com.adobe.marketing.mobile.ExperienceEvent
 import com.adobe.marketing.mobile.test.demoapp.ui.theme.DemoAppTheme
 import com.adobe.marketing.mobile.test.demoapp.v2.eventHub
 import com.adobe.marketing.mobile.test.demoapp.v2.initializeSDK
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.launch
 import java.util.concurrent.atomic.AtomicInteger
 
 class MainActivity : ComponentActivity() {
@@ -69,10 +76,10 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             val requestNumber = 10
             val startTime = System.currentTimeMillis()
 
-            (1..requestNumber).forEach { _ ->
+            (1..requestNumber).forEach { number ->
                 val xdmData = mapOf(
                     "eventType" to "SampleXDMEvent",
-                    "sample" to "data"
+                    "sample" to "data- $number"
                 )
                 val event: ExperienceEvent =
                     ExperienceEvent.Builder().setXdmSchema(xdmData).build()
@@ -113,6 +120,28 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
             Text(text = "sendConfig")
         }
         Button(onClick = {
+
+            val sharedFlow = MutableSharedFlow<Int>(replay = 10, extraBufferCapacity = 10)
+            sharedFlow.onEach {
+                Log.d("xxx", "onEach: $it")
+                if (it == 1) {
+                    delay(2000)
+                    Log.d("xxx", "completed: $it")
+                }else{
+                    delay(200)
+                    Log.d("xxx", "completed: $it")
+                }
+
+            }.launchIn(CoroutineScope(Dispatchers.Default))
+            val scope = CoroutineScope(Dispatchers.Default.limitedParallelism(1))
+            scope.launch {
+                sharedFlow.emit(1)
+                Log.d("xxx","111111 thread name: ${Thread.currentThread().name}")
+            }
+            scope.launch {
+                sharedFlow.emit(2)
+                Log.d("xxx","2222 thread name: ${Thread.currentThread().name}")
+            }
 
         }) {
             Text(text = "xxx")

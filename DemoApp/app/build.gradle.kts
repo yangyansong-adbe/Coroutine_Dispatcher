@@ -24,7 +24,8 @@ sourceSets {
         "src/main/java",
         "../../edge/code/edge/src/main/java",
         "../../core/code/core/src/main/java",
-        "../../core/code/core/src/phone/java"
+        "../../core/code/core/src/phone/java",
+        "../../edge_identity/code/edgeidentity/src/main/java"
         )
 }
 
@@ -59,10 +60,10 @@ sourceSets {
 }
 
 dependencies {
-    implementation(platform("com.adobe.marketing.mobile:sdk-bom:3.0.0"))
-    implementation("com.adobe.marketing.mobile:edgeidentity"){
-        exclude("com.adobe.marketing.mobile", "core")
-    }
+//    implementation(platform("com.adobe.marketing.mobile:sdk-bom:3.0.0"))
+//    implementation("com.adobe.marketing.mobile:edgeidentity"){
+//        exclude("com.adobe.marketing.mobile", "core")
+//    }
     implementation("com.google.guava:guava:33.2.0-jre")
 
     implementation("io.ktor:ktor-client-android:1.5.0")

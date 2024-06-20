@@ -1,5 +1,6 @@
 package com.adobe.marketing.mobile.test.demoapp.v2
 
+import android.util.Log
 import com.adobe.marketing.mobile.Event
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.ObsoleteCoroutinesApi
@@ -15,29 +16,40 @@ import java.time.Duration
 
 @ExperimentalCoroutinesApi
 @ObsoleteCoroutinesApi
-fun Flow<Event>.readyForEvent(): Flow<List<Event>> {
+fun Flow<Event>.readyForEvent(predicate: suspend (Event) -> Boolean): Flow<Event> {
 
     return flow {
         coroutineScope {
-            val events = ArrayList<Event>()
+            val events = ArrayDeque<Event>()
             try {
-                val upstreamValues = produce { collect { send(it) } }
+                val upstreamValues = produce {
+                    collect {
+                        Log.e("readyForEvent_1", "collect, thread name = ${Thread.currentThread().name}")
+                        send(it)
+                    }
+                }
 
                 while (isActive) {
 
                     select<Unit> {
                         upstreamValues.onReceive {
                             events.add(it)
-                            if (it.source == "Configuration") {
-                                emit(events.toList())
-                                events.clear()
+                            while (events.isNotEmpty()) {
+                                Log.e("readyForEvent_2", "thread name = ${Thread.currentThread().name}")
+                                if (predicate(it)) {
+                                    Log.e("readyForEvent_2", "emit, thread name = ${Thread.currentThread().name}")
+                                    emit(events.removeFirst())
+                                } else {
+                                    Log.e("readyForEvent_2", "break, thread name = ${Thread.currentThread().name}")
+                                    break
+                                }
                             }
                         }
                     }
                 }
             } catch (e: ClosedReceiveChannelException) {
                 // drain remaining events
-                if (events.isNotEmpty()) emit(events.toList())
+//                if (events.isNotEmpty()) emit(events.toList())
             } finally {
 //                tickerChannel.cancel()
             }

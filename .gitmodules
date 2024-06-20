@@ -6,3 +6,6 @@
 	path = edge
 	url = git@github.com:yangyansong-adbe/aepsdk-edge-android.git
 	branch = Coroutine_Dispatcher
+[submodule "edge_identity"]
+	path = edge_identity
+	url = git@github.com:yangyansong-adbe/aepsdk-edgeidentity-android.git
